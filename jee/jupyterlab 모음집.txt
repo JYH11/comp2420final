@@ -1,0 +1,35 @@
+# Part 2 COMP2420
+
+
+gini_impurity 와 gain 얻는 함수 y에는 y값 x에는 요소들
+
+def gini_impurity(y):
+    label_gini = 0
+    for l in y.unique():
+        p = sum(l==y)/len(y)
+        label_gini += p * (1-p)
+    return label_gini
+
+def calculate_info_gain(X, y, dt):
+    
+    leaf_id = dt.apply(X)
+    class_prob = dt.predict_proba(X)[:,0]
+
+    dt_gini = 0
+    for leaf_node in np.unique(leaf_id):
+        num_of_sample = sum(leaf_id == leaf_node)
+        p = np.sum(class_prob[leaf_id == leaf_node], axis=0)/num_of_sample
+        for l in y.unique():
+            dt_gini += p * (1-p) * num_of_sample/len(X)
+    label_gini = gini_impurity(y)
+    print(f'Gini Impurity of the Labels: {label_gini:.4f}')
+    print(f'Total Gini gain: {label_gini:.4f} - {dt_gini:.4f} = {(label_gini-dt_gini):.4f}')
+    
+아래는 사용예시
+for max_depth in [3, 4]:
+    print('max_depth: {max_depth}: ')
+    dt_2 = DecisionTreeClassifier(max_depth=max_depth).fit(train_x, train_y)
+    print('Train Set: ')
+    calculate_info_gain(train_x, train_y, dt_2)
+    print('Test Set: ')
+    calculate_info_gain(test_x, test_y, dt_2)

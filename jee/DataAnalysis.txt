@@ -1,0 +1,94 @@
+0. BASIC
+
+q3q4_df = pd.read_csv('./data/Q3Q4.csv')
+q3q4_df.isna().sum().head(5)   섬과 헤드를 동시에
+
+
+print(q3q4_df['Transmission'].unique()) 유니크 종류탐색
+
+1.BOX PLOT
+
+sns.boxplot(x='Fuel Type', y='Fuel Consumption Comb (L/100 km)', hue='Transmission', data=q3q4_df)  
+# 매우 매우 유용함 뭔가 성별 남녀 처럼 또는 강아지 고양이 토끼 처럼 새로운 카테고리인데 같은 형태로 분리할떄 유용
+plt.title('Fuel Consumption Comb by different Fuel Type and Transmission')
+plt.show()
+
+1.2LINE PLOT
+
+# YOUR CODE HERE
+sns.lineplot(x = 'Engine Size(L)', y="Fuel Consumption Comb (L/100 km)", hue = 'Transmission' , data=q3q4_df)
+plt.title('Engine Size(L) vs Fuel Consumption Comb (L/100 km)') # 문난한 타이틀이름 for differnet tra.. 붙히든말든
+plt.show()
+
+
+
+2.Null hypo 에 유용 alternative에 less greater 설정가능!1 0.05가 국룰
+
+suv_standard_fc = q3q4_df[q3q4_df['Vehicle Class'] == 'SUV']['Fuel Consumption Comb (mpg)']
+full_size_fc = q3q4_df[q3q4_df['Vehicle Class'] == 'FULL-SIZE']['Fuel Consumption Comb (mpg)']
+t, p = stats.ttest_ind(suv_standard_fc, full_size_fc, alternative='less') #alternative less setting 가능
+print(p)
+
+
+3.scatter plot과 hue (highlight에 활용 그리고 idxmax)
+
+# Your Code here
+#q2
+#sns.scatterplot(x=newdf.iloc[:,2], y=newdf.iloc[:,1]) 
+#plt.title("Relationship between % of country > 65 and government spending on pension benefits",y=1.2)
+#q3
+countries=['Mexico', 'Turkey', 'Brazil', 'Poland', 'France', 'Italy', 'Greece', 'Japan', 'United States', 'South Korea']
+highlight=np.where(newdf['Country'].isin(countries) , 'Highlighted', 'Normal')
+#sns.scatterplot(x=newdf.iloc[:,2],y=newdf.iloc[:,1], hue=highlight)
+#plt.title("Relationship between % of country > 65 and government spending on pension benefits",y=1.2)
+
+#Question 5
+ratios=newdf.iloc[:,2]/newdf.iloc[:,1]
+maxid=ratios.idxmax() #최대값을가져오는게아니라 최대값이 있는 index return
+highlight[maxid]='Max Ratio'
+sns.scatterplot(x=newdf.iloc[:,1],y=newdf.iloc[:,2], hue=highlight)
+plt.title("Relationship between % of country > 65 and government spending on pension benefits",y=1.2)
+plt.show()
+
+
+
+
+
+Additional
+간편 클러스터 SCATTER PLO 
+# YOUR CODE HERE
+q4q5_df = pd.read_csv('./data/Q4Q5.csv')
+pca = PCA(n_components=2)
+cluster_df = q4q5_df[['Fuel Consumption Comb (L/100 km)', 'CO2 Emissions(g/km)', 'Engine Size(L)', 'Cylinders']] #사용하라는것만 넣기
+km_model = KMeans(n_clusters=5) #클러스터는 자료가 잘되어있단 가정하엔 쉬움 그냥 넣으면됨
+reduced_df = pca.fit_transform(cluster_df) # pca reduced 거의공식
+km_model.fit(reduced_df) # df넣는데 여기선 reduced넣고
+sns.scatterplot(x=reduced_df[:, 0], y=reduced_df[:,1], hue = map(lambda x : 'Cluster '+str(x), km_model.labels_ + 1)) 
+# 뽑아보면알겠지만 pca되서 0 과 1임 하나가 x하나가 y 그냥외워!
+plt.title('KMeans K = 5')
+plt.show()
+
+
+
+
+차트 고르기 (또는 문제로나올떄 서술형)
+
+Histogram: Histograms are useful for visualizing the distribution and frequency of continuous data. They are often used to identify patterns, outliers, and skewness in data.
+Pie Chart: Pie charts are effective for displaying proportions or percentages of categorical data. They are commonly used to compare the relative sizes of different categories within a whole.
+Bar Plot: Bar plots are suitable for comparing categorical data and showing the frequency or count of each category. They provide a clear visual representation of the data's distribution.
+Line Plot: Line plots are ideal for representing trends and patterns over time or continuous data. They are commonly used to display changes, trends, or relationships between variables.
+Side-by-Side Boxplots: Side-by-side boxplots are used to compare the distribution of a continuous variable across different categories. They allow for easy visual comparison of measures such as median, quartiles, and outliers between groups.
+Scatter Plot: Scatter plots are effective for visualizing the relationship between two continuous variables. They are useful for identifying correlations, clusters, or trends in data.
+Stacked Bar Plot: Stacked bar plots are suitable for displaying the composition or distribution of multiple categories within a single variable. They show the total amount while also illustrating the relative contribution of each category.
+These plots are chosen based on the specific data and the type of analysis or comparison required.
+
+
+
+
+히스토그램: 히스토그램은 연속형 데이터의 분포와 빈도를 시각화하는 데 유용합니다. 데이터의 패턴, 이상치, 비대칭성 등을 파악하는 데 사용됩니다.
+원 그래프: 원 그래프는 범주형 데이터의 비율이나 백분율을 나타내는 데 효과적입니다. 전체 내에서 각 범주의 상대적인 크기를 비교하는 데 사용됩니다.
+막대 그래프: 막대 그래프는 범주형 데이터를 비교하고 각 범주의 빈도나 개수를 시각적으로 보여줍니다. 데이터의 분포를 명확하게 시각화하는 데 사용됩니다.
+선 그래프: 선 그래프는 시간이나 연속형 데이터의 추이와 패턴을 나타내는 데 적합합니다. 변수 간의 변화, 추세, 관계 등을 시각적으로 표현하는 데 사용됩니다.
+나란히 놓인 상자 그림: 나란히 놓인 상자 그림은 연속형 변수를 범주별로 비교하는 데 사용됩니다. 중앙값, 사분위수, 이상치 등을 그룹 간에 쉽게 비교할 수 있습니다.
+산점도: 산점도는 두 연속형 변수 간의 관계를 시각화하는 데 유용합니다. 데이터의 상관관계, 군집, 추세 등을 파악하는 데 사용됩니다.
+적층 막대 그래프: 적층 막대 그래프는 하나의 변수 내에서 여러 범주의 구성 또는 분포를 표시하는 데 적합합니다. 각 범주의 상대적인 기여도를 나타내며 전체 양을 동시에 보여줍니다.

@@ -1,0 +1,107 @@
+conn =  create_connection("./data/premier.db")
+
+===sql 기초========================
+최대최소 MAX로도 가능하지만 요소가 필요할떈 query = """SELECT * FROM parts ORDER BY Weight DESC limit 1;"""
+
+1.테이블 목록?이름 가져오기
+query = "SELECT name, sql FROM sqlite_master WHERE type='table';"  
+2. max 키워드 와 유동적인 열 생성
+query = 'SELECT MAX(height) FROM player;'  
+df_result = pd.read_sql_query(query, conn)      
+
+
+3.and 연산자 활용 join 아님(여러개 select와 where에서 여러개의 조건 달기)
+query = 'SELECT homescore, awayscore FROM game where home_team="Liverpool" and away_team="Chelsea";'
+3-2 where 활용 
+WHERE column_3 LIKE 'SMITH%'; SMITH로 시작? 일단포함
+ WHERE column_2 IN (1,2,3);    어디안에 포함되는지
+WHERE column_4 BETWEEN 10 AND 20;   값사이
+
+4.avg 와 groub by ,HAVING!!!!!, 어떤거 as 이름으로 하면 이름을 이렇게 바꿔서 표현하는거
+query = 'SELECT player_id, AVG(goals) as number_of goals FROM game_stats GROUP BY player_id;' (AVG와 GROUB BY)
+종합선물세트  COUNT를써서 HAVING에조건을만들고 그중에서도 BETWEEN을넣어 18과 20사이로만  그리고 ORDER 는 ALUBMID 오름차순으로(DEFAULT가 ASC라)
+
+album1820_query = """SELECT * FROM tracks
+                    GROUP BY albumid
+                    HAVING COUNT(albumid) BETWEEN 18 AND 20
+                    ORDER BY albumid"""
+
+
+
+
+
+5.join 다른 테이블에서 같은키 (pk와 fk관계) 이면 합침 where로 또 필터링 근데 보시다싶이 name!= team임 하지만 team에서  name이 결국 team이름이니까.. 이 관계를 잘확인
+query = 'SELECT MIN(weight) FROM team JOIN player ON team.name = player.team WHERE city = "London";'
+
+6. ORDER BY(DESC OR ASC) 디펄트는 asc 여러개도 가능 
+## For You Todo
+tracks_ordered_query = """SELECT * 
+                    FROM tracks
+                    ORDER BY
+                        albumid ASC;
+                        milliseconds DESC"""
+
+7.SELECT DISTINCT select_list   duplicate row제거
+cityCountry_query = """SELECT DISTINCT city, country
+                        FROM customers
+                        ORDER BY country"""   좋은활용예제 나라는 중첩되게 도시는 중첩안되게
+
+8. LIMIT 와 OFFSET 
+		tracks20_query = """SELECT * FROM tracks
+                LIMIT 20 OFFSET 60"""    LIMIT만하면 딱 그수인데 OFFSET이면 OFFSET부터 LIMIT수 더한거까지.. 배열 생각
+
+
+9.Inner Join  다른 TABLE과 결합 (FK -> PK 구조가 대부분)
+inJoin_query = """SELECT 
+                a.Title, r.Name               <= 여기서도 a.이렇게 해도됨
+                FROM albums a  <=이렇게 약자로 축약하면
+                INNER JOIN artists r
+                    ON a.ArtistId = r.ArtistId;"""    <=컨디션은 on에서결정
+join 예시2 distince도 사용한것 주의 여기서 그냥 name하면 에러뜰수도
+query = """SELECT Distinct s.name FROM suppliers s
+        Join requests r
+        ON r.s_id = s.s_id
+        Join jobs j
+        ON j.j_id = r.j_id
+        Where j.name = "Console";"""
+df_result = pd.read_sql_query(query, conn)      
+df_result
+
+
+10.Left Join + where is null  <= inner냐 left냐 이름 만 바꾸면되서 방법은 차이가없음 다만 . 구조적으로 조금다름
+https://velog.io/@profile_exe/SQL-LEFT-JOIN-INNER-JOIN-%EC%B0%A8%EC%9D%B4
+쉽게생각하면 inner조인은 교집합 left조인은  교집합+ left(A왼쪽꺼) 까지 전부    right면 반대  이건 null을 발생시킴
+
+leftJoin_query = """SELECT
+    Name, 
+    Title
+FROM
+    artists
+LEFT JOIN albums ON
+    artists.ArtistId = albums.ArtistId
+WHERE Title IS NULL
+ORDER BY Name"""
+
+ 
+11. natrual join 이건 그냥 외우기 일단 on이 안들어감 설명은 여기 https://pakker.tistory.com/115
+Find all (suppliers, parts) where the supplier doesn't have enough parts to fill their requests.
+하도 배배 꼬였을땐 사용하자
+
+	
+query="""SELECT s_id,p_id FROM supplier_inventory AS si NATURAL JOIN
+        (SELECT s_id,p_id,SUM(quantity) AS sum FROM requests GROUP BY s_id,p_id) AS req
+        WHERE si.quantity<req.sum;"""
+
+
+=====================================sql data 만들기 ==========================
+1. 테이블 예시  테이블 이름 타입 널 선택  그리고 밑에서 foreignkey와 primarykey 지정 (과제에서도 별로 강조안되던거여서 주의요망)
+CREATE TABLE raw_materials_usage (
+  lot_number VARCHAR(15) NOT NULL,
+  material_id VARCHAR(15) NOT NULL,
+  units INT,
+  FOREIGN KEY (lot_number) REFERENCES lot,
+  FOREIGN KEY (material_id) REFERENCES raw_materials,
+  PRIMARY KEY (lot_number, material_id)
+);
+
+2. 시간나면 만들예정

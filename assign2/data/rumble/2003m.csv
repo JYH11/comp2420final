@@ -1,0 +1,31 @@
+Draw,Entrant,Brand,Order,Eliminated by,Time,Eliminations
+1,Shawn Michaels,Raw,1,Chris Jericho,02:31,0
+2,Chris Jericho,Raw,14,Test,39:00,6
+3,Christopher Nowinski,Raw,2,Rey Mysterio,04:37,0
+4,Rey Mysterio,SmackDown,3,Chris Jericho,05:55,1
+5,Edge,SmackDown,10,Chris Jericho,11:03,3
+6,Christian,Raw,9,Chris Jericho,09:03,1
+7,Chavo Guerrero,SmackDown,8,Edge,07:10,0
+8,Tajiri,SmackDown,6,Chris Jericho,05:41,0
+9,Bill DeMott,SmackDown,4,Edge,02:13,0
+10,Tommy Dreamer,Raw,5,Chris Jericho;Christian,00:48,0
+11,Bull Buchanan,SmackDown,7,Edge,00:24,0
+12,Rob Van Dam,Raw,26,Kane,33:00,2
+13,Matt Hardy,SmackDown,21,Brock Lesnar,27:13,0
+14,Eddie Guerrero,SmackDown,13,Booker T,16:29,0
+15,Jeff Hardy,Raw,11,Rob Van Dam,07:26,0
+16,Rosey,Raw,12,Kane,10:16,0
+17,Test,Raw,17,Batista,18:45,1
+18,John Cena,SmackDown,22,The Undertaker,19:38,0
+19,Charlie Haas,SmackDown,20,Brock Lesnar,17:17,2
+20,Rikishi,SmackDown,18,Batista,14:10,0
+21,Jamal,Raw,23,The Undertaker,16:07,0
+22,Kane,Raw,28,The Undertaker,20:24,3
+23,Shelton Benjamin,SmackDown,19,Brock Lesnar,10:55,2
+24,Booker T,Raw,16,Charlie Haas;Shelton Benjamin,06:20,1
+25,A-Train,SmackDown,25,Kane;Rob Van Dam,11:33,0
+26,Maven,Raw,24,The Undertaker,08:19,0
+27,Goldust,Raw,15,Charlie Haas;Shelton Benjamin,00:47,0
+28,Batista,Raw,27,The Undertaker,09:55,2
+29,Brock Lesnar,SmackDown,—,Winner,09:00,4
+30,The Undertaker,SmackDown,29,Brock Lesnar,06:45,5

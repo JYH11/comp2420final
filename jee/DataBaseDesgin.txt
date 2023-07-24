@@ -1,0 +1,92 @@
+서술형파트 1정규 2정규 3정규
+
+The database is in first normal form given that:
+1. All attribute domains are atomic;
+2. All attreibutes contain only a single value;
+3. All attributes are uniquely determined by the primary key (for Participant, different ParticipatID will need to be assigned in every new match).
+
+The database is also in 2NF given that it is in 1NF and all non-key attributes are uniquely determined by the entire primary key - no partial redundancy exists.
+짧은답변:Table is in 1NF and no dependency attributes
+
+The database is not in 3NF since not all non-key attributes depend on the key(s) solely - if we try to update Eliminations number for a participant, the TimeInMatch will need to be updated potentially.
+
+database에서의 flat과 hierachical 차이
+Flat file is like an excel sheet, where the data is written in simple table format. Whereas Hierarchical is where the data is organised into a tree-like structure, an example is IBM Information Management System (IMS).
+
+Data definition language와 data manipulation 언어의차이
+Data definition is sepcifying the database structure, while data manipulation is the access/modification of the data from the storage.
+
+=====================================sql data 만들기 ==========================
+1. 테이블 예시  테이블 이름 타입 널 선택  그리고 밑에서 foreignkey와 primarykey 지정 (과제에서도 별로 강조안되던거여서 주의요망)
+CREATE TABLE [IF NOT EXISTS]  tabblename (
+  lot_number VARCHAR(15) NOT NULL,
+  material_id VARCHAR(15) NOT NULL,
+  units INT,
+  FOREIGN KEY (lot_number) REFERENCES lot,
+  FOREIGN KEY (material_id) REFERENCES raw_materials,
+  PRIMARY KEY (lot_number, material_id)
+);
+
+2. foreign key   references로 연결할 테이블 지정 그리고 같음 attribute로 묶기
+## For You Todo
+create_table_query = """
+CREATE TABLE Orders (
+OrderID int NOT NULL PRIMARY KEY,
+OrderNumber int NOT NULL,
+PersonID int,
+FOREIGN KEY (PersonID) REFERENCES Persons2(PersonID)
+);
+
+# Person2에있는 person id를 레퍼런스해서 가져온후 거기에서 personid를 foregin key로 지정?
+execute_sql(conn, create_table_query)
+
+
+3.DROP TABLE [IF EXISTS] table_name; 그냥 이러면 테이블삭제
+4.insert table
+insert_order_query = """
+INSERT INTO Orders(OrderId, OrderNumber,PersonId,Order_Date)
+Values(1,2200,30, datetime('now', 'localtime'))
+
+
+"""
+
+execute_sql(conn, insert_order_query)
+conn.commit()
+5.UPDATE TABLE  (ORDER LIMIT필수아님 WHERE도 필수가아닐수도)
+First, specify the table where you want to update after the UPDATE clause.
+Second, set new value for each column of the table in the SET clause.
+Third, specify rows to update using a condition in the WHERE clause. The WHERE clause is optional. If you skip it, the UPDATE statement will update data in all rows of the table.
+Finally, use the ORDER BY and LIMIT clauses in the UPDATE statement to specify the number of rows to update
+형태)
+UPDATE table
+SET column_1 = new_value_1,
+    column_2 = new_value_2
+WHERE
+    search_condition 
+ORDER column_or_expression
+LIMIT row_count OFFSET offset;
+
+예시) 원하는 항목 2개의 10을 곱한것 다만 WHERE로 어떤 항목을 곱할지 정함 기존SQL처럼 뽑아오는것같지만 업데이트도
+update_order_query = """
+UPDATE Orders 
+SET OrderNumber =OrderNumber *10,
+    PersonID = PersonId* 10
+WHERE
+    OrderID =1;
+"""
+
+6. DELETE ROW  (WHERE까지만해도 왠만한건됨)
+DELETE FROM table
+WHERE search_condition
+ORDER BY criteria
+LIMIT row_count OFFSET offset;
+예시)
+
+delete_order_query = """
+DELETE FROM Orders
+WHERE OrderID = 1;
+"""
+execute_sql(conn, delete_order_query)
+conn.commit()
+7. FOREIGN CONSTRAINT 이건.. 나오면 WK7_PART1 참고
+ADDITIONAL은 WK7_PART2 .. 이건 안나올가능성이높아보임

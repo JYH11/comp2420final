@@ -1,0 +1,347 @@
+from lab5 로지스틱 회귀, k-NEAREST 이웃모델, CLASSIFICATION 분류
+ 유니크와 sort를 이용한 리스트 저장및 그걸로 for loop로  bar그래프 그리기!!
+
+유용한 IMPORT
+import itertools
+from sklearn.metrics import accuracy_score,f1_score      print("Accuracy score: ",accuracy_score(test_y,pred)))  print("F1 score: ",f1_score(test_y,pred))
+from sklearn.decomposition import PCA                   
+from sklearn.preprocessing import LabelEncoder
+
+
+KNN 최고의 예시!! 중 K가 고정이고 요소 하이퍼 페러미터 K 하이퍼는 아래 내리면있음
+def pairChecker(data):
+    """
+    Input/s: Dataframe of every column in the dataset
+    Expected Output/s: The names of the best performing pair of models based on accuracy of KNN classifier as a list.
+    
+    Expected steps: Determine the pairs of columns that can be used, for each pair implement a KNN classifier and
+                    check the accuracy score. Return the column names of the pair with the best accuracy score as a list.
+    """
+   
+    # Your Code Here
+    column_names=list(poke_data.columns[3:-1])
+    
+    best_features = []
+    best_score = -1
+    for i in range(len(column_names) - 1):
+        for j in range(i+1, len(column_names) - 1):
+            knn = KNeighborsClassifier(n_neighbors=10)  
+            features_to_test = [column_names[i],column_names[j]]
+            Iter_data =poke_data[features_to_test]
+            Iter_data["Legendary"] =poke_data["Legendary"] #add new row
+            train,test=train_test_split(Iter_data,test_size=0.2)             
+            knn_model = knn.fit(train.iloc[:,:-1], train.iloc[:,-1]) 
+            test_score= knn_model.score(test.iloc[:,:-1],test.iloc[:,-1])
+            # find the best hyper
+            if best_score <= test_score:
+                best_score = test_score
+                best_model = knn_model
+                best_features = features_to_test
+    return best_features
+
+
+
+하이퍼 패러미터를 찾은 후 
+
+
+# Your Code Here
+X=poke_data[pairChecker(poke_data)]
+y=poke_data['Legendary']
+
+train_x,test_x,train_y,test_y=train_test_split(X,y,test_size=0.2)
+
+
+#KNN
+knn_model=KNeighborsClassifier(n_neighbors=10)
+knn_model.fit(train_x,train_y)
+pred=knn_model.predict(test_x)
+print("KNN")
+print("Accuracy score: ",accuracy_score(test_y,pred))
+print("F1 score: ",f1_score(test_y,pred))
+print()
+
+
+
+
+
+
+
+
+
+
+로지스틱 PREDICT ACCURANCY
+from sklearn.metrics import accuracy_score
+pred_train_y = lr.predict(train_X)
+pred_test_y = lr.predict(test_X)
+print(accuracy_score(train_y, pred_train_y))
+print(accuracy_score(test_y, pred_test_y))
+
+p = tp/(tp+fp)
+r= tp/(tp+fn)
+print(p)
+print(r)
+f1 = 2 *(p*r)/(p+r)
+print(f1)
+accu = (tp+tn)/(tp+tn+fp+fn)
+print(accu)
+
+
+
+로지스틱 over fitting  과  underfitting
+If the training accuracy is significantly higher than the testing accuracy, it indicates that the model is overfitting the training data, meaning it is too complex and captures noise in the data instead of the underlying patterns. In this case, the model will perform poorly on new, unseen data.
+
+training score가 teesting보다 높을떈 over
+On the other hand, if the training accuracy is similar to the testing accuracy, but both are low, it indicates that the model is underfitting the data, meaning it is too simple and fails to capture the underlying patterns in the data. In this case, the model will also perform poorly on new, unseen data.
+비슷하지만 둘다 낮을떄 underfitting
+
+
+
+
+# plot pclass
+classes = np.sort(titanic["Pclass"].unique())
+heights = [len(titanic[titanic["Pclass"]==pclass]) for pclass in classes]
+plt.bar(classes, heights, align='center')
+plt.xticks(np.arange(len(classes))+1, classes)
+plt.title("Dist of Passenger Class")
+plt.show()
+
+
+data Preprocessing (dropna와 label encoder
+
+def data_preprocessing(data):
+ 
+    
+    new_titanic = titanic[['Pclass', 'Sex', 'Age', 'SibSp', 'Fare', 'Survived']]
+    le = LabelEncoder() #  change male 1 female to 0
+    recoded_Sex = le.fit_transform(new_titanic['Sex'])       <== le.fit_transform(에서 하고싶은 열지정)
+    new_titanic.loc[:, 'Sex'] = recoded_Sex
+    print(new_titanic.head(10))
+    return new_titanic.dropna()       <==nan mssing값처리
+    
+Logistic 회귀 모델 적용 및 zip 사용법
+
+ train_x, test_x, train_y, test_y  = data_split(data)
+    #select model
+    lr = LogisticRegression(solver='lbfgs', max_iter=1000)
+    logres_model = lr.fit(train_x, train_y)
+    # TODO
+    intercept = logres_model.intercept_
+    #https://www.daleseo.com/python-zip/ what is zip? concate [1,2,3] [a,b,c]  make it pair (1,a) (2,b)...
+    # coef_[0] has 6 elements,     print(train_x.columns) is our catergories so it could use zip
+    """방법1
+    not use k:co .. <=개인적 이방법추천
+      coef = {}
+     for k, co in zip(train_x.columns, logres_model.coef_[0]):
+        coef[k] = co
+    """
+    """방법2
+    also not use zip just use for loop
+   
+    for i in range(len(train_x.columns)):
+        k = train_x.columns[i]
+        co = logres_model.coef_[0][i]
+        coef[k] = co
+    
+    """    이주석대신을 아래처럼 할수있는건
+
+    coef = {k:co for k, co in zip(train_x.columns, logres_model.coef_[0] ) }  <= 이게 labsolution방법임
+   # print(logres_model.coef_[0])
+
+    train_score = logres_model.score(train_x, train_y)
+    test_score = logres_model.score(test_x, test_y)
+
+Logistic 회귀 적용(여기서 survived 테스틀하니 0이면 죽음 1이면 산거)
+
+#                                   Pclass  Sex   Age  SibSp     Fare  Survived
+pred = logres_model.predict(np.array([[1,    1,   50,   0,         10]]))
+#pred = logres_model.predict(np.array([[3,    0,   24,   0,         10]]))
+# 24 is my age,   sex 1 = man almost dead but pclass 1 people alive
+
+주의할점  coeff 1.5라고 150프로 사는게아님 즉.. translate directly하면안됨 즉 transformation을 한번 거쳐야함
+
+
+# TODO: predict survivability using our logres_model for yoursaelf
+print("You could survive! Yeah :)" if pred==1 else "It seemed that you couldn't survive :(")
+
+이번에 살확률로..
+# lower class, male, 20yo, 0 relatives on-board, $10 fare
+pred = logres_model.predict_proba(np.array([[3, 1, 20, 0, 10]]))  위와선 predict로끝나지만 여기선 pred= ..predict_proba 임! 결국
+model 학습방식은같은데 _proba를 붙이냐 아니냐에차이!
+print("Probability of survival is", (pred[0][1]*100).round(2), "%")
+
+
+====================================================
+Lab5-2 K-nearest-Neighbour
+
+1) Scaling data!
+
+# TODO: scale data
+def data_scaling(train_x, test_x):
+ 
+    # select and set model  평사시모델 방법처럼 모델불러오기 모델피트하기 하지만 여기선 scale  up이니 train,test 둘다 적용
+    SS = StandardScaler();
+    SS_model = SS.fit(train_x);
+    # scale each of them (train and test)
+    train_x_scaled = SS_model.transform(train_x);
+    test_x_scaled = SS_model.transform(test_x);
+   
+!!!!!!!!!!!!!! scaled 되면 pandas type이아니라 전환해줘야함
+train_x_scaled = pd.DataFrame(train_x_scaled, columns=processed_titanic.columns[:-1])
+test_x_scaled = pd.DataFrame(test_x_scaled, columns=processed_titanic.columns[:-1])
+
+
+
+2) APPLY KNN
+    processed_titanic = data_preprocessing(data)
+    train_x, test_x, train_y, test_y = data_split(processed_titanic) 일단 스플릿 평상시대로하고
+    train_x_scaled, test_x_scaled = data_scaling(train_x,test_x)  TRAIN TEST 둘다 X값만 스케일링
+     
+    knn = KNeighborsClassifier(n_neighbors=5)
+    knn_model = knn.fit(train_x_scaled, train_y)      TRAIN_X가아닌 SCALED를 사용
+    
+    train_score = knn_model.score(train_x_scaled, train_y)    그럼으로 score할떄도  y는 둘다 scaled가아님
+    test_score = knn_model.score(test_x_scaled, test_y)
+    
+
+3) How Big Should Our Neighbourhood Be? (hyperparameter 최적 매개변수)
+이건 그냥 암기..
+# TODO: create a validation set
+train_x_scaled, val_x_scaled, train_y, val_y = train_test_split(train_x_scaled,train_y, test_size=0.2)
+
+# TODO: play around with parameters and find the best model on validation set
+best_k = -1
+best_score = -1
+for k in [1,2,3,5,7,9,15,31,51,train_x_scaled.shape[0]]:
+    knn = KNeighborsClassifier(n_neighbors=k)    # just change the n_neighbors parameter
+    knn_model = knn.fit(train_x_scaled, train_y) # scaled X, un-scaled y
+    train_score = knn.score(train_x_scaled, train_y)
+    val_score = knn.score(val_x_scaled, val_y)
+    print(k, "Training Score:", train_score, "Validation Score: ", val_score)
+    # find the best k
+    if best_score <= val_score:
+        best_score = val_score
+        best_model = knn_model
+        best_k = k
+
+print(f'The best k is {besk_k} and the best val score is {best_score:.4f}')
+
+이웃에대한 정의? 추천?
+For n_neighbors=1, it only finds the closest training point, so a small change in its predictor values might lead to a different neighbour, and thus the opposite target prediction.
+As n_neighbors increases, the training score will decrease (think about why this is), but the testing score will fluctuate. We recommend an odd number around >=5 and <=15, depending on the size and variation in your data.
+
+
+======================================================================================================================
+4)Classifying 전체적으로 순서 및가이드라인 (통합 매우중요)
+
+
+# TODO: 1 transform, 2 split, 3 scale 3-2(dataframe와 다시해줘야함), 4 fit, 5 score (step!)
+
+
+#1. transform label  <= encoder도 (숫자화)
+le = LabelEncoder()
+le.fit(iris["species"])
+iris["species"] = le.transform(iris["species"])
+
+# 2.split data
+train_x_iris, test_x_iris, train_y_iris, test_y_iris= train_test_split(iris.iloc[:,:-1],iris.iloc[:,-1], test_size=0.2)
+
+# 3.scale data  <=== 이게필요 k-neighbour는
+ss = StandardScaler()
+ss.fit(train_x_iris)
+train_x_iris_scaled = ss.transform(train_x_iris)
+test_x_iris_scaled = ss.transform(test_x_iris)
+
+
+# means and variances to check
+print("train set mean: {:5.4f} \t train set var: {:5.4f} \ntest set mean: {:5.4f} \t test set var: {:5.4f}".format(train_x_iris_scaled.mean(), train_x_iris_scaled.var(), test_x_iris_scaled.mean(), test_x_iris_scaled.var()))
+
+#3-2 convert to DataFrames     <= data frame으로 치환 (pd.dataframe(넣고싶은x)) scaled는 data프레임으로 안도이어ㅣㅆ끼때문
+train_x_iris_scaled = pd.DataFrame(train_x_iris_scaled)
+train_x_iris_scaled.columns = train_x_iris.columns         (열값 따로 저장법 .columns(데이터프레임으로 바꿧을경우에만)
+
+test_x_iris_scaled = pd.DataFrame(test_x_iris_scaled)  <= test는 따로 dataframe
+test_x_iris_scaled.columns = test_x_iris.columns
+
+# 4) fit data   따른 모델처럼 이제 fit 이제야가능 
+knn = KNeighborsClassifier(n_neighbors=5)
+knn_iris_model = knn.fit(train_x_iris_scaled, train_y_iris)
+
+# 5) find scores  score찾기..도
+print("Training Score:", knn_iris_model.score(train_x_iris_scaled, train_y_iris))
+print("Testing Score: ", knn_iris_model.score(test_x_iris_scaled, test_y_iris))
+
+5) confussing 이건 렉처 참조   그리고 밑에 거 매우 유용함,.. 가시성이좋음
+값만 필요시엔  tn,fp,fn,tp 값 matrix로 뽑고 아래 공식 으로 추출
+f1 =0.5면 balanced하다
+ f1 score and accurancy
+p = tp/(tp+fp)
+r= tp/(tp+fn)
+print(p)
+print(r)
+f1 = 2 *(p*r)/(p+r)
+print(f1)
+accu = (tp+tn)/(tp+tn+fp+fn)
+print(accu)
+
+
+# TODO: save confusion matrix counts
+tn, fp, fn, tp = confusion_matrix(test_y, logres_model.predict(test_x)).ravel()
+
+print("                 PREDICTION")
+print("                __0_____1__")
+print("OBSERVATION  0 |", str(tn).rjust(2), "  ", str(fp).rjust(2), "|", tn+fp)
+print("             1 |", str(fn).rjust(2), "  ", str(tp).rjust(2), "|", fn+tp)
+print("               ------------")
+print("                ", tn+fn, "  ", fp+tp, " ", tn+fp+fn+tp)
+
+
+                 PREDICTION
+                __0_____1__
+OBSERVATION  0 | 78     8 | 86
+             1 | 15    42 | 57
+               ------------
+                 93    50   143
+
+
+이 4종류는 렉처 노트 를보면참조.. 일단은 시험떈 외우기힘들면 하라고할떄 꺼내쓰끼
+Recall: TP / (TP + FN). This describes the proportion of actual-positive observations that were correctly classified.
+Precision: TP / (TP + FP). This is the percentage of positive-predicted observations that were correctly classified.
+Accuracy: (TP + TN) / (TP+FP+FN+TN). This is the percentage of correctly classified observations in total. This is the same as the model.score() function that we used earlier.
+F1: (2 * Recall * Prediction) / (Recall + Prediction). This is a weighted average of recall and precision, and generally a better metric than accuracy for data that is un
+balanced with respect to its target labels.
+
+밑에가 공식.. 바루 수치화
+recall = tp/(tp+fn)
+prec = tp/(tp+fp)
+acc = (tp+tn)/(tp+fp+fn+tn)
+f1 = (2*recall*prec)/(recall+prec)
+print("Recall:   ", recall,
+    "\nPrecision:", prec,
+    "\nAccuracy: ", acc,
+    "\nF1 Score: ", f1)
+
+
+만약에 n_neighbour을 traning data사이즈랑 같게한다면??
+# TODO: change n_neighbors and look at confusion matrix
+knn = KNeighborsClassifier(n_neighbors=train_x_scaled.shape[0])
+knn_model = knn.fit(train_x_scaled, train_y)
+
+print(confusion_matrix(test_y, knn_model.predict(test_x_scaled)))
+[[86  0]
+ [57  0]] 
+00이떠버린다..?
+어떨댄 스케일링이  효율이좋고 어떨떈 스케일링이 같거나 약가 안 좋게도나옴..그차이는?!! 중요
+
+
+. Hint: look at the descriptive statistics for both datasets. Which statistic(s) are most relevant?
+
+One statistic that is relevant for determining the impact of scaling on a dataset is the range of values in the dataset. In the case of the Titanic dataset, the range of values is much larger than in the Iris dataset. For example, the age of passengers on the Titanic ranges from 0.42 to 80 years old, while the length of petals in the Iris dataset ranges from 0.1 to 2.5 cm.
+
+When the range of values in a dataset is large, the impact of features with larger values can overshadow the impact of features with smaller values. This can cause the model to overemphasize the importance of certain features and lead to poor performance.
+
+Scaling the features in the Titanic dataset brings all features to a similar scale, which can help prevent the issue of overemphasizing certain features. On the other hand, the range of values in the Iris dataset is already relatively small, so scaling has less impact on the performance of the model.
+
+데이터셋에 스케일링이 영향을 미치는데 중요한 통계량 중 하나는 값의 범위(range)입니다. 타이타닉 데이터셋에서 값의 범위는 아이리스 데이터셋보다 훨씬 큽니다. 예를 들어, 타이타닉 데이터셋에서 승객의 나이는 0.42세부터 80세까지 다양하게 분포되어 있지만, 아이리스 데이터셋에서 꽃잎 길이는 0.1cm부터 2.5cm까지 비교적 작은 범위에 있습니다.
+데이터셋의 값의 범위가 크면, 값이 큰 특성은 값이 작은 특성보다 더 큰 영향을 미칠 수 있습니다. 이는 모델이 특정한 특성의 중요성을 지나치게 강조하고 모델 성능을 저하시킬 수 있습니다.
+
+따라서, 타이타닉 데이터셋에서 스케일링을 수행하면 각 특성을 비슷한 범위로 맞추어주어 이러한 문제를 예방할 수 있습니다. 반면, 아이리스 데이터셋에서는 값의 범위가 이미 비교적 작기 때문에 스케일링이 모델 성능에 덜 영향을 미칩니다.

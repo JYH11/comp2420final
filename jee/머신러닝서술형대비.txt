@@ -1,0 +1,19 @@
+Supervised Learning: Supervised learning is used when both the input data (X) and output data (Y) are available. That is, the data is labeled during the time the model is learning from it. The learned model can then predict the appropriate output for new input data.
+
+Unsupervised Learning: Unsupervised learning is used when only input data (X) is provided without labels. The goal is to discover patterns, structures, or knowledge from the data.
+
+Now let's see where each of the mentioned techniques falls into.
+
+Linear Regression: This is a supervised learning algorithm. It is used to model the relationship between two variables. It is particularly useful in predicting results with continuous values (e.g., house prices, weather predictions, etc).
+
+Logistic Regression: This is also a supervised learning algorithm. It works similarly to linear regression but is mainly used to predict binary outcomes (e.g., whether an email is spam or not, whether a transaction is fraudulent or not, etc).
+
+Clustering: This is an unsupervised learning algorithm. This algorithm forms groups (clusters) based on the similarity of the data. Since there are no labels, the model groups the data based on similarity criteria (e.g., customer segmentation, gene grouping, etc).
+
+Decision Tree: This is a supervised learning algorithm. It creates a rule-based model to predict the outcome based on input variables. It can be used for both classification and regression problems (e.g., credit risk assessment, disease diagnosis, etc).
+
+The k-Nearest Neighbors (k-NN) algorithm is a type of instance-based learning algorithm, which can be used for both classification and regression tasks, making it a Supervised Learning method. Here's a brief description:
+
+
+요약하면 clustering 을 제외한 모든건 supervised 알고리즘임(우리가 배운 모델중에선)\
+참고로로 knn은 가장 가까운거리에 최대 많은갯수 기준으로 분류 근데 거리 공식 이용하는 방법엠따라 같은 k여도 다른값 가능
